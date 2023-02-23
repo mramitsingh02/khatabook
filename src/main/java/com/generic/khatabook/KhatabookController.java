@@ -34,7 +34,7 @@ public class KhatabookController {
 
     @PutMapping("/khatabook/khatabook")
     public Khatabook updateKhatabook(@RequestBody Khatabook Khatabook) {
-
+//LOg
         return Khatabook;
     }
 
