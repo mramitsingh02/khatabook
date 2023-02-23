@@ -1,5 +1,6 @@
-package com.generic.khatabook;
+package com.generic.khatabook.controller;
 
+import com.generic.khatabook.controller.pojo.Greeting;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;

@@ -1,7 +1,14 @@
-package com.generic.khatabook;
+package com.generic.khatabook.controller;
 
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.*;
+import com.generic.khatabook.controller.pojo.Customer;
+import com.generic.khatabook.services.IdGeneratorService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.List;
@@ -10,8 +17,10 @@ import java.util.List;
 public class CustomerController {
 
 
-//    @Autowired
+    //    @Autowired
 //    private CustomerService myCustomerService;
+    @Autowired
+    private IdGeneratorService myIdGeneratorService;
 
     @GetMapping(path = "khatabook/{khatabookId}/customers")
     public List<Customer> customerList() {
