@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -21,7 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.Objects;
 
 @RestController
-public class CustomerController {
+public class PaymentController {
 
 
     @Autowired
@@ -37,8 +36,8 @@ public class CustomerController {
     @Autowired
     private IdGeneratorService myIdGeneratorService;
 
-    @GetMapping(path = "/khatabook/{khatabookId}/customers")
-    public ResponseEntity<?> getKhatabookDetails(@PathVariable String khatabookId) {
+    @GetMapping(path = "/khatabook/{khatabookId}/customer/{customerId}/payment")
+    public ResponseEntity<?> getKhatabookDetails(@PathVariable String khatabookId, @PathVariable String customerId) {
 
         final val khatabook = myKhatabookService.getKhatabookByKhatabookId(khatabookId);
         if (Objects.isNull(khatabook)) {
@@ -51,7 +50,7 @@ public class CustomerController {
         return ResponseEntity.ok(khatabookDetails);
     }
 
-    @PostMapping(path = "/khatabook/{khatabookId}/customer")
+    @PostMapping(path = "/khatabook/{khatabookId}/customer/{customerId}/payment")
     public ResponseEntity<?> createCustomer(@PathVariable String khatabookId, @RequestBody Customer customer) {
 
         final val khatabook = myKhatabookService.getKhatabookByKhatabookId(khatabookId);
@@ -63,22 +62,6 @@ public class CustomerController {
         myCustomerService.create(customerRequest);
 
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().path("/id/{id}").buildAndExpand(customer.customerId()).toUri()).body(customerRequest);
-    }
-
-    @GetMapping(path = "/khatabook/{khatabookId}/customer/msisdn/{msisdn}")
-    public Customer deleteByMsisdn(@PathVariable String msisdn) {
-        return new Customer("", "", msisdn, "dummy", "dummy");
-    }
-
-    @GetMapping(path = "/khatabook/{khatabookId}/customer/id/{id}")
-    public Customer deleteById(@PathVariable Long id) {
-        return new Customer("", "", "msisdn", "dummy", "dummy");
-    }
-
-    @PutMapping(path = "/khatabook/{khatabookId}/customer")
-    public Customer updateCustomer(@RequestBody Customer customer) {
-
-        return customer;
     }
 
 

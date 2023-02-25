@@ -1,4 +1,4 @@
-package com.generic.khatabook.services;
+package com.generic.khatabook.service;
 
 public interface IdGeneratorService {
     String generateId();
