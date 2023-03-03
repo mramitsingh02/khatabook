@@ -1,34 +1,34 @@
 package com.generic.khatabook.service.mapper;
 
-import com.generic.khatabook.entity.CustomerDTO;
-import com.generic.khatabook.model.Customer;
+import com.generic.khatabook.entity.Customer;
+import com.generic.khatabook.model.CustomerDTO;
 
 public class CustomerMapper {
-    private Customer myCustomer;
     private CustomerDTO myCustomerDTO;
-
-    public CustomerMapper(Customer customer) {
-        myCustomer = customer;
-    }
+    private Customer myCustomer;
 
     public CustomerMapper(CustomerDTO customerDTO) {
         myCustomerDTO = customerDTO;
     }
 
-    public static Customer mapToPojo(CustomerDTO myCustomerDTO) {
-
-        if (myCustomerDTO == null) {
-            return null;
-        }
-
-
-        return new Customer(myCustomerDTO.getCustomerId(), myCustomerDTO.getKhatabookId(), myCustomerDTO.getMsisdn(), myCustomerDTO.getFirstName(), myCustomerDTO.getLastName());
+    public CustomerMapper(Customer customer) {
+        myCustomer = customer;
     }
 
-    public static CustomerDTO mapToDTO(Customer myCustomer) {
+    public static CustomerDTO mapToPojo(Customer myCustomer) {
+
         if (myCustomer == null) {
             return null;
         }
-        return CustomerDTO.builder().customerId(myCustomer.customerId()).khatabookId(myCustomer.khatabookId()).firstName(myCustomer.firstName()).lastName(myCustomer.lastName()).msisdn(myCustomer.msisdn()).build();
+
+
+        return new CustomerDTO(myCustomer.getCustomerId(), myCustomer.getKhatabookId(), myCustomer.getMsisdn(), myCustomer.getFirstName(), myCustomer.getLastName());
+    }
+
+    public static Customer mapToDTO(CustomerDTO myCustomerDTO) {
+        if (myCustomerDTO == null) {
+            return null;
+        }
+        return Customer.builder().customerId(myCustomerDTO.customerId()).khatabookId(myCustomerDTO.khatabookId()).firstName(myCustomerDTO.firstName()).lastName(myCustomerDTO.lastName()).msisdn(myCustomerDTO.msisdn()).build();
     }
 }

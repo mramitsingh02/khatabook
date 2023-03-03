@@ -1,8 +1,9 @@
 package com.generic.khatabook.service.impl;
 
-import com.generic.khatabook.entity.KhatabookDTO;
+import com.generic.khatabook.entity.GenerationDate;
+import com.generic.khatabook.entity.Khatabook;
 import com.generic.khatabook.exceptions.NotFoundException;
-import com.generic.khatabook.model.Khatabook;
+import com.generic.khatabook.model.KhatabookDTO;
 import com.generic.khatabook.repository.KhatabookRepository;
 import com.generic.khatabook.service.KhatabookService;
 import com.generic.khatabook.service.mapper.KhatabookMapper;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,35 +23,35 @@ public class KhatabookServiceImpl implements KhatabookService {
     private KhatabookRepository myKhatabookRepository;
 
     @Override
-    public boolean isValid(final Khatabook khatabook) {
-        return myKhatabookRepository.exists(Example.of(KhatabookDTO.builder().khatabookId(khatabook.khatabookId()).build()));
+    public boolean isValid(final KhatabookDTO khatabookDTO) {
+        return myKhatabookRepository.exists(Example.of(Khatabook.builder().khatabookId(khatabookDTO.khatabookId()).build()));
     }
 
     @Override
-    public Khatabook get(final String msisdn) {
+    public KhatabookDTO get(final String msisdn) {
         return KhatabookMapper.mapToPojo(myKhatabookRepository.findByMsisdn(msisdn).orElseThrow(() -> new RuntimeException("Customer not found.")));
     }
 
     @Override
-    public void create(final Khatabook khatabook) {
+    public void create(final KhatabookDTO khatabookDTO) {
 
-        log.info("Khatabook {} created.", khatabook.khatabookId());
-        myKhatabookRepository.save(KhatabookMapper.mapToDTO(khatabook));
-        log.info("Khatabook {} successful created.", khatabook.khatabookId());
+        log.info("Khatabook {} created.", khatabookDTO.khatabookId());
+        myKhatabookRepository.save(KhatabookMapper.mapToDTO(khatabookDTO, new GenerationDate(LocalDateTime.now(Clock.systemDefaultZone()))));
+        log.info("Khatabook {} successful created.", khatabookDTO.khatabookId());
     }
 
     @Override
-    public Khatabook update(final Khatabook khatabook) {
-        log.info("Khatabook {} created.", khatabook.khatabookId());
-        myKhatabookRepository.save(KhatabookMapper.mapToDTO(khatabook));
+    public KhatabookDTO update(final KhatabookDTO khatabookDTO) {
+        log.info("Khatabook {} created.", khatabookDTO.khatabookId());
+        myKhatabookRepository.save(KhatabookMapper.mapToDTO(khatabookDTO, new GenerationDate(null, LocalDateTime.now(Clock.systemDefaultZone()))));
 
-        log.info("Khatabook {} successful created.", khatabook.khatabookId());
-        return getKhatabookByKhatabookId(khatabook.khatabookId());
+        log.info("Khatabook {} successful created.", khatabookDTO.khatabookId());
+        return getKhatabookByKhatabookId(khatabookDTO.khatabookId());
     }
 
     @Override
-    public Khatabook delete(final String khatabookId, final String msidn) {
-        KhatabookDTO customer;
+    public KhatabookDTO delete(final String khatabookId, final String msidn) {
+        Khatabook customer;
         if (khatabookId != null) {
             customer = myKhatabookRepository.findByKhatabookId(khatabookId).orElseThrow(() -> new NotFoundException(String.format("Customer %s not found.", khatabookId)));
         } else {
@@ -60,13 +63,13 @@ public class KhatabookServiceImpl implements KhatabookService {
     }
 
     @Override
-    public List<Khatabook> getAll() {
+    public List<KhatabookDTO> getAll() {
 
         return myKhatabookRepository.findAll().stream().map(KhatabookMapper::mapToPojo).toList();
     }
 
     @Override
-    public Khatabook getKhatabookByKhatabookId(final String khatabookId) {
+    public KhatabookDTO getKhatabookByKhatabookId(final String khatabookId) {
         return KhatabookMapper.mapToPojo(myKhatabookRepository.findByKhatabookId(khatabookId).stream().findFirst().orElseThrow(() -> new NotFoundException(khatabookId)));
     }
 }

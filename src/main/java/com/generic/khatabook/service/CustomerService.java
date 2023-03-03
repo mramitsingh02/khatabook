@@ -1,21 +1,23 @@
 package com.generic.khatabook.service;
 
-import com.generic.khatabook.model.Customer;
+import com.generic.khatabook.model.CustomerDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 @Component
 public interface CustomerService {
-    boolean isValid(Customer customer);
+    boolean isValid(CustomerDTO customerDTO);
 
-    Customer get(String msisdn);
+    CustomerDTO getByCustomerId(String msisdn);
 
-    void create(Customer customer);
+    CustomerDTO getByMsisdn(String msisdn);
 
-    Customer update(Customer customer);
+    void create(CustomerDTO customerDTO);
 
-    Customer delete(Long id, String msidn);
+    CustomerDTO update(CustomerDTO customerDTO);
 
-    Set<Customer> getAll();
+    CustomerDTO delete(Long id, String msidn);
+
+    Set<CustomerDTO> getAll();
 }

@@ -1,7 +1,7 @@
 package com.generic.khatabook.service.impl;
 
-import com.generic.khatabook.entity.CustomerDTO;
-import com.generic.khatabook.model.Customer;
+import com.generic.khatabook.entity.Customer;
+import com.generic.khatabook.model.CustomerDTO;
 import com.generic.khatabook.repository.CustomerRepository;
 import com.generic.khatabook.service.CustomerService;
 import com.generic.khatabook.service.mapper.CustomerMapper;
@@ -22,29 +22,34 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerRepository myCustomerRepository;
 
     @Override
-    public boolean isValid(Customer customer) {
-        return CustomerMapper.mapToPojo(myCustomerRepository.existsByMsisdn(customer.msisdn())) != null;
+    public boolean isValid(CustomerDTO customerDTO) {
+        return CustomerMapper.mapToPojo(myCustomerRepository.existsByMsisdn(customerDTO.msisdn())) != null;
     }
 
     @Override
-    public Customer get(String msisdn) {
+    public CustomerDTO getByCustomerId(final String msisdn) {
+        return CustomerMapper.mapToPojo(myCustomerRepository.findByCustomerId(msisdn));
+    }
+
+    @Override
+    public CustomerDTO getByMsisdn(String msisdn) {
         return CustomerMapper.mapToPojo(myCustomerRepository.findByMsisdn(msisdn));
     }
 
     @Override
-    public void create(Customer customer) {
-        myCustomerRepository.save(CustomerMapper.mapToDTO(customer));
+    public void create(CustomerDTO customerDTO) {
+        myCustomerRepository.save(CustomerMapper.mapToDTO(customerDTO));
 
     }
 
     @Override
-    public Customer update(Customer customer) {
-        return CustomerMapper.mapToPojo(myCustomerRepository.save(CustomerMapper.mapToDTO(customer)));
+    public CustomerDTO update(CustomerDTO customerDTO) {
+        return CustomerMapper.mapToPojo(myCustomerRepository.save(CustomerMapper.mapToDTO(customerDTO)));
     }
 
     @Override
-    public Customer delete(Long id, String msidn) {
-        CustomerDTO customer;
+    public CustomerDTO delete(Long id, String msidn) {
+        Customer customer;
         if (id != null) {
             customer = myCustomerRepository.findById(id).orElseThrow(() -> new RuntimeException("Customer not found."));
         } else {
@@ -56,7 +61,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Set<Customer> getAll() {
+    public Set<CustomerDTO> getAll() {
         return myCustomerRepository.findAll().stream().map(CustomerMapper::mapToPojo).collect(Collectors.toSet());
     }
 

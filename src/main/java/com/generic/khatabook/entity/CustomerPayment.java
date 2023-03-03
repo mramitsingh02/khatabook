@@ -1,5 +1,6 @@
 package com.generic.khatabook.entity;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,7 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "customer_payment")
@@ -18,15 +19,19 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CustomerPaymentDTO {
+public class CustomerPayment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    private String customerId;
     private String khatabookId;
-    private BigDecimal amount;
+    private String customerId;
+    private String paymentType;
+    @Embedded
+    private Amount amount;
+    private LocalDate paymentOnDate;
+    private String descriptions;
+
 
 }
 

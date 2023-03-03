@@ -8,13 +8,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class KhatabookDTO {
+public class Khatabook {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,5 +28,12 @@ public class KhatabookDTO {
     private String msisdn;
     private String partnerName;
     private String partnerDescription;
+    private String status;
+    @CreationTimestamp
+    private LocalDateTime createdOn;
+    @UpdateTimestamp
+    private LocalDateTime updatedOn;
+    @UpdateTimestamp
+    private LocalDateTime deletedOn;
 
 }

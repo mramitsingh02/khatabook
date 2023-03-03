@@ -1,23 +1,23 @@
 package com.generic.khatabook.service;
 
-import com.generic.khatabook.model.Khatabook;
+import com.generic.khatabook.model.KhatabookDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 public interface KhatabookService {
-    boolean isValid(Khatabook customer);
+    boolean isValid(KhatabookDTO customer);
 
-    Khatabook get(String msisdn);
+    KhatabookDTO get(String msisdn);
 
-    void create(Khatabook customer);
+    void create(KhatabookDTO customer);
 
-    Khatabook update(Khatabook customer);
+    KhatabookDTO update(KhatabookDTO customer);
 
-    Khatabook delete(String khatabookId, String msidn);
+    KhatabookDTO delete(String khatabookId, String msidn);
 
-    List<Khatabook> getAll();
+    List<KhatabookDTO> getAll();
 
-    Khatabook getKhatabookByKhatabookId(String khatabookId);
+    KhatabookDTO getKhatabookByKhatabookId(String khatabookId);
 }

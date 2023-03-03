@@ -1,6 +1,6 @@
 package com.generic.khatabook.controller;
 
-import com.generic.khatabook.model.Khatabook;
+import com.generic.khatabook.model.KhatabookDTO;
 import com.generic.khatabook.service.IdGeneratorService;
 import com.generic.khatabook.service.KhatabookService;
 import lombok.val;
@@ -27,44 +27,42 @@ public class KhatabookController {
     private IdGeneratorService myIdGeneratorService;
 
     @GetMapping("/khatabook/khatabooks")
-    public List<Khatabook> khatabookList() {
+    public List<KhatabookDTO> khatabookList() {
         return myKhatabookService.getAll();
     }
 
     @PostMapping("/khatabook/khatabook")
-    public ResponseEntity<Object> createKhatabook(@RequestBody Khatabook khatabook) {
+    public ResponseEntity<KhatabookDTO> createKhatabook(@RequestBody KhatabookDTO khatabookDTO) {
 
-        final val khatabookRequest = khatabook.copyOf(myIdGeneratorService.generateId());
+        final val khatabookRequest = khatabookDTO.copyOf(myIdGeneratorService.generateId());
 
         if (!myKhatabookService.isValid(khatabookRequest)) {
             myKhatabookService.create(khatabookRequest);
             return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().path("/khatabookId/{khatabookId}").buildAndExpand(khatabookRequest.khatabookId()).toUri()).body(khatabookRequest);
         } else {
-            return ResponseEntity.badRequest().body(khatabook);
+            return ResponseEntity.badRequest().body(khatabookDTO);
         }
-
-
     }
 
     @GetMapping("/khatabook/khatabook/msisdn/{msisdn}")
-    public Khatabook deleteByMsisdn(@PathVariable String msisdn) {
+    public KhatabookDTO deleteByMsisdn(@PathVariable String msisdn) {
         return myKhatabookService.delete(NULL, msisdn);
     }
 
     @GetMapping("/khatabook/khatabook/khatabookId/{khatabookId}")
-    public Khatabook getById(@PathVariable String khatabookId) {
+    public KhatabookDTO getById(@PathVariable String khatabookId) {
         return myKhatabookService.getKhatabookByKhatabookId(khatabookId);
     }
 
 
     @DeleteMapping("/khatabook/khatabook/khatabookId/{khatabookId}")
-    public Khatabook deleteById(@PathVariable String khatabookId) {
+    public KhatabookDTO deleteById(@PathVariable String khatabookId) {
         return myKhatabookService.delete(khatabookId, NULL);
     }
 
     @PutMapping("/khatabook/khatabook")
-    public Khatabook updateKhatabook(@RequestBody Khatabook khatabook) {
-        return myKhatabookService.update(khatabook);
+    public KhatabookDTO updateKhatabook(@RequestBody KhatabookDTO khatabookDTO) {
+        return myKhatabookService.update(khatabookDTO);
     }
 
 }
