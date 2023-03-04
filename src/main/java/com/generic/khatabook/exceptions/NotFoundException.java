@@ -11,6 +11,6 @@ public class NotFoundException extends RuntimeException {
     }
 
     public NotFoundException(final AppEntity appEntity, final String id) {
-        super(appEntity.name() + " " + id + " not fount!.");
+        super(appEntity.getName() + " " + id + " not fount!.");
     }
 }

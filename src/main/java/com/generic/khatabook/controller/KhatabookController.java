@@ -32,15 +32,15 @@ public class KhatabookController {
     }
 
     @PostMapping("/khatabook/khatabook")
-    public ResponseEntity<KhatabookDTO> createKhatabook(@RequestBody KhatabookDTO khatabookDTO) {
+    public ResponseEntity<KhatabookDTO> createKhatabook(@RequestBody KhatabookDTO khatabook) {
 
-        final val khatabookRequest = khatabookDTO.copyOf(myIdGeneratorService.generateId());
+        final val khatabookRequest = khatabook.copyOf(myIdGeneratorService.generateId());
 
         if (!myKhatabookService.isValid(khatabookRequest)) {
             myKhatabookService.create(khatabookRequest);
             return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().path("/khatabookId/{khatabookId}").buildAndExpand(khatabookRequest.khatabookId()).toUri()).body(khatabookRequest);
         } else {
-            return ResponseEntity.badRequest().body(khatabookDTO);
+            return ResponseEntity.badRequest().body(khatabook);
         }
     }
 
@@ -59,6 +59,12 @@ public class KhatabookController {
     public KhatabookDTO deleteById(@PathVariable String khatabookId) {
         return myKhatabookService.delete(khatabookId, NULL);
     }
+
+    @DeleteMapping("/khatabook/khatabook/")
+    public KhatabookDTO deleteByLastIndex() {
+        return myKhatabookService.delete(NULL, NULL);
+    }
+
 
     @PutMapping("/khatabook/khatabook")
     public KhatabookDTO updateKhatabook(@RequestBody KhatabookDTO khatabookDTO) {

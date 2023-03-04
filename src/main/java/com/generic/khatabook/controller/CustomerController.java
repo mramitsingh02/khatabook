@@ -1,11 +1,12 @@
 package com.generic.khatabook.controller;
 
 import com.generic.khatabook.entity.AppEntity;
-import com.generic.khatabook.exceptions.CustomerResponseError;
 import com.generic.khatabook.exceptions.NotFoundException;
+import com.generic.khatabook.model.AmountDTO;
 import com.generic.khatabook.model.CustomerDTO;
 import com.generic.khatabook.model.KhatabookDetails;
 import com.generic.khatabook.model.KhatabookPaymentSummary;
+import com.generic.khatabook.model.PaymentDTO;
 import com.generic.khatabook.service.CustomerService;
 import com.generic.khatabook.service.IdGeneratorService;
 import com.generic.khatabook.service.KhatabookService;
@@ -76,7 +77,7 @@ public class CustomerController {
     public ResponseEntity<?> getKhataBookCustomerDetails(@PathVariable String khatabookId, @PathVariable String customerId) {
         final CustomerDTO customerDetails = myCustomerService.getByCustomerId(customerId);
         if (Objects.isNull(customerDetails)) {
-            return ResponseEntity.badRequest().body(new CustomerResponseError(customerId + " not fount."));
+            return ResponseEntity.badRequest().body(new NotFoundException(AppEntity.CUSTOMER, customerId));
         }
 
 
@@ -89,18 +90,22 @@ public class CustomerController {
         final KhatabookPaymentSummary customerDairy = myPaymentService.getPaymentDetailForCustomer(customerDetails);
 
         KhatabookDetails khatabookDetails = new KhatabookDetails(khatabook, customerDetails, customerDairy);
-        Link linkGiventToCustomer = linkTo(methodOn(PaymentController.class)
-                .gavenToCustomer(khatabookId, khatabookDetails.customerDTOS().stream().findFirst().map(CustomerDTO::customerId).orElse(null), null)).withRel("PayTo");
+        final String customerLink = khatabookDetails.customerDTOS().stream().findFirst()
+                .map(CustomerDTO::customerId).orElse(null);
+
+        Link linkGivenToCustomer = linkTo(methodOn(PaymentController.class)
+                .gavenToCustomer(khatabookId, customerLink, new PaymentDTO(customerDetails.customerId(), null, AmountDTO.ZERO)))
+                .withRel("PayTo");
 
         Link linkReceiveFromCustomer = linkTo(methodOn(PaymentController.class)
-                .receiveFromCustomer(khatabookId, khatabookDetails.customerDTOS().stream().findFirst().map(CustomerDTO::customerId).orElse(null), null)).withRel("PayTo");
+                .receiveFromCustomer(khatabookId, customerLink, new PaymentDTO(null, customerDetails.customerId(), AmountDTO.ZERO)))
+                .withRel("WithdrawFrom");
 
         EntityModel<KhatabookDetails> entityModel = EntityModel.of(khatabookDetails);
-        entityModel.add(linkGiventToCustomer);
+        entityModel.add(linkGivenToCustomer);
         entityModel.add(linkReceiveFromCustomer);
         return ResponseEntity.ok(entityModel);
     }
-
 
     @GetMapping(path = "/khatabook/{khatabookId}/customer/msisdn/{msisdn}")
     public CustomerDTO deleteByMsisdn(@PathVariable String msisdn) {

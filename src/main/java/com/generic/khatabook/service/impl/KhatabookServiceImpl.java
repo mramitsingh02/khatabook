@@ -1,5 +1,6 @@
 package com.generic.khatabook.service.impl;
 
+import com.generic.khatabook.entity.AppEntity;
 import com.generic.khatabook.entity.GenerationDate;
 import com.generic.khatabook.entity.Khatabook;
 import com.generic.khatabook.exceptions.NotFoundException;
@@ -14,7 +15,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @Service
 @Slf4j
@@ -50,12 +54,18 @@ public class KhatabookServiceImpl implements KhatabookService {
     }
 
     @Override
-    public KhatabookDTO delete(final String khatabookId, final String msidn) {
+    public KhatabookDTO delete(final String khatabookId, final String msisdn) {
         Khatabook customer;
+        if (isNull(khatabookId) && isNull(msisdn)) {
+            final Khatabook foundLastKhatabook = myKhatabookRepository.findAll().stream().sorted(Comparator.comparing(Khatabook::getCreatedOn)).findFirst().orElseThrow(() -> new IllegalArgumentException("all value is deleted"));
+            myKhatabookRepository.delete(foundLastKhatabook);
+            return KhatabookMapper.mapToPojo(foundLastKhatabook);
+        }
+
         if (khatabookId != null) {
-            customer = myKhatabookRepository.findByKhatabookId(khatabookId).orElseThrow(() -> new NotFoundException(String.format("Customer %s not found.", khatabookId)));
+            customer = myKhatabookRepository.findByKhatabookId(khatabookId).orElseThrow(() -> new NotFoundException(AppEntity.KHATABOOK, khatabookId));
         } else {
-            customer = myKhatabookRepository.findByMsisdn(msidn).orElseThrow(() -> new NotFoundException(String.format("Customer %s not found.", msidn)));
+            customer = myKhatabookRepository.findByMsisdn(msisdn).orElseThrow(() -> new NotFoundException(AppEntity.MSISDN, msisdn));
         }
         myKhatabookRepository.delete(customer);
 

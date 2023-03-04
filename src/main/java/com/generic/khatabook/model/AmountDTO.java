@@ -1,19 +1,24 @@
 package com.generic.khatabook.model;
 
+import jakarta.persistence.Cacheable;
+
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
-
+@Cacheable
 public record AmountDTO(BigDecimal value, String unitOfMeasurement, Currency currency) {
 
     public static final Currency DEFAULT = Currency.getInstance(Locale.getDefault());
     public static final AmountDTO ZERO = new AmountDTO();
     public static final AmountDTO TEN = new AmountDTO(BigDecimal.TEN);
+    private static final Map<BigDecimal, AmountDTO> map = new HashMap<>();
+
 
     public AmountDTO() {
         this(BigDecimal.ZERO, DEFAULT.getCurrencyCode(), DEFAULT);
-
     }
 
     public AmountDTO(final BigDecimal amount) {
@@ -21,18 +26,30 @@ public record AmountDTO(BigDecimal value, String unitOfMeasurement, Currency cur
     }
 
     public static AmountDTO of(BigDecimal amountValue, String unitOfMeasurement) {
+        if (map.containsKey(amountValue)) {
+            return map.get(amountValue);
+        }
         return new AmountDTO(amountValue, unitOfMeasurement.toUpperCase(Locale.getDefault()), DEFAULT);
     }
 
     public static AmountDTO of(BigDecimal amountValue, Currency currency) {
+        if (map.containsKey(amountValue)) {
+            return map.get(amountValue);
+        }
         return new AmountDTO(amountValue, currency.getCurrencyCode(), currency);
     }
 
     public static AmountDTO of(final long value) {
-        return new AmountDTO(BigDecimal.valueOf(value));
+        final BigDecimal amountValue = BigDecimal.valueOf(value);
+        if (map.containsKey(amountValue)) {
+            return map.get(amountValue);
+        }
+        final AmountDTO amountDTO = new AmountDTO(amountValue);
+        map.putIfAbsent(amountValue, amountDTO);
+        return amountDTO;
     }
 
-    public static AmountDTO of(BigDecimal value, String unitOfMeasurement, Currency currency) {
-        return new AmountDTO(value, unitOfMeasurement, currency);
+    public static AmountDTO of(BigDecimal amountValue, String unitOfMeasurement, Currency currency) {
+        return new AmountDTO(amountValue, unitOfMeasurement, currency);
     }
 }
